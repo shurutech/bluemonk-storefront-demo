@@ -46,6 +46,7 @@ function toSessionItems(items: DemoCartItem[]): SessionCartItem[] {
     quantity: item.quantity,
     price: item.price,
     product: { name: item.name },
+    ...(item.attributes ? { attributes: item.attributes } : {}),
   }));
 }
 

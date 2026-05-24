@@ -123,6 +123,7 @@ export interface DemoCartItem {
   name: string;
   price: number;
   quantity: number;
+  attributes?: Record<string, unknown>;
 }
 
 export type DemoSessionState = 'open' | 'closed' | 'cancelled';

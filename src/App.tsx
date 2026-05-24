@@ -1,10 +1,10 @@
 import { Toaster } from '@/components/ui/sonner';
-import { DemoStorefront } from '@/pages/DemoStorefront';
+import { BrewlyStorefront } from '@/pages/BrewlyStorefront';
 
 export default function App() {
   return (
     <>
-      <DemoStorefront />
+      <BrewlyStorefront />
       <Toaster />
     </>
   );
