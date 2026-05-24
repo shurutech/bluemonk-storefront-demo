@@ -6,13 +6,13 @@
   NODE_VERSION = "20"
 
 # Same-origin proxy to the deployed BlueMonk backend.
-# Browser only sees Netlify origin, so no CORS preflight is sent;
-# Netlify forwards the request server-to-server with X-API-Key intact.
-[[redirects]]
-  from = "/api/*"
-  to = "https://demo.bluemonk.shurutech.com/:splat"
-  status = 200
-  force = true
+# Implemented as an Edge Function (not a plain redirect) so we can strip
+# Origin / Referer / Cookie before forwarding — the deployed backend sits
+# behind GCP Cloud Armor, which 403s requests that look like they
+# originated from an unknown browser origin.
+[[edge_functions]]
+  function = "api-proxy"
+  path = "/api/*"
 
 # SPA fallback so client-side routes resolve on refresh.
 [[redirects]]
