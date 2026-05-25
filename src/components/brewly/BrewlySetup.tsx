@@ -46,12 +46,8 @@ export function BrewlySetup({ onConnect, validateApiKey }: BrewlySetupProps) {
         </div>
 
         <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+          <p className="mb-5 text-xs font-semibold tracking-wider text-slate-400 uppercase">
             Connect to BlueMonk
-          </p>
-          <p className="mt-1 mb-5 text-xs text-slate-500">
-            Paste your Integration API base URL and key. Brewly will sync the cart to your
-            campaigns and rules in real time.
           </p>
 
           <label className="block text-xs font-medium text-slate-700">API base URL</label>
@@ -85,18 +81,7 @@ export function BrewlySetup({ onConnect, validateApiKey }: BrewlySetupProps) {
               'Connect'
             )}
           </Button>
-
-          <p className="mt-4 text-[11px] leading-relaxed text-slate-400">
-            Hosted demos use <code className="rounded bg-stone-100 px-1 py-0.5 font-mono">/api</code> as the
-            base URL — Netlify proxies to the deployed backend so no CORS change is needed. For
-            local dev, paste{' '}
-            <code className="rounded bg-stone-100 px-1 py-0.5 font-mono">http://localhost:8080/api</code>.
-          </p>
         </div>
-
-        <p className="mt-6 text-center text-[11px] text-slate-400">
-          Internal demo · Not a real customer app
-        </p>
       </div>
     </div>
   );
