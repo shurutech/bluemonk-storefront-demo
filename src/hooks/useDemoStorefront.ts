@@ -141,7 +141,7 @@ export function useDemoStorefront() {
         customerSession: {
           state: stateToSend,
           profileId,
-          couponCodes: couponsToSend.length > 0 ? couponsToSend : undefined,
+          couponCodes: couponsToSend,
           cartItems: toSessionItems(itemsToSend),
         },
         responseContent: ['triggeredCampaigns', 'effects', 'coupons', 'ruleFailureReasons'],
