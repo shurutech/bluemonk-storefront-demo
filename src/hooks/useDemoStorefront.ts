@@ -7,6 +7,7 @@ import {
 import { DEFAULT_DEMO_CART } from '@/data/demoCart';
 import type {
   DemoCartItem,
+  DemoFreeItem,
   DemoRequestSnapshot,
   DemoSessionState,
   DemoStorefrontConfig,
@@ -312,6 +313,23 @@ export function useDemoStorefront() {
       ?.filter(e => e.effectType === 'setDiscount' || e.effectType === 'setDiscountAdditionalCost')
       .reduce((sum, e) => sum + (Number(e.props?.value) || 0), 0) ?? 0;
 
+  const freeItems: DemoFreeItem[] =
+    lastResponse?.effects
+      ?.filter(e => e.effectType === 'addFreeItem')
+      .map(e => {
+        const props = e.props as {
+          sku?: string;
+          name?: string;
+          desiredQuantity?: number;
+        };
+        return {
+          sku: props.sku ?? '',
+          discountName: props.name ?? 'FREE',
+          quantity: props.desiredQuantity ?? 1,
+        };
+      })
+      .filter(item => item.sku !== '') ?? [];
+
   return {
     // config
     config,
@@ -325,6 +343,7 @@ export function useDemoStorefront() {
     updateCartItem,
     cartSubtotal,
     discountTotal,
+    freeItems,
     // coupons
     couponCodes,
     applyCoupon,

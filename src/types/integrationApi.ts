@@ -126,6 +126,12 @@ export interface DemoCartItem {
   attributes?: Record<string, unknown>;
 }
 
+export interface DemoFreeItem {
+  sku: string;
+  discountName: string;
+  quantity: number;
+}
+
 export type DemoSessionState = 'open' | 'closed' | 'cancelled';
 
 export interface EventLogEntry {

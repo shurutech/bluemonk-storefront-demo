@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { BREWLY_MENU } from '@/data/brewlyMenu';
 import type {
   DemoCartItem,
+  DemoFreeItem,
   DemoSessionState,
   IntegrationSessionUpdateResponse,
 } from '@/types/integrationApi';
@@ -20,6 +21,7 @@ interface BrewlyCartProps {
   open: boolean;
   onClose: () => void;
   cartItems: DemoCartItem[];
+  freeItems: DemoFreeItem[];
   cartSubtotal: number;
   discountTotal: number;
   couponCodes: string[];
@@ -40,6 +42,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
     open,
     onClose,
     cartItems,
+    freeItems,
     cartSubtotal,
     discountTotal,
     couponCodes,
@@ -105,7 +108,8 @@ export function BrewlyCart(props: BrewlyCartProps) {
           <div>
             <h2 className="text-lg font-bold text-slate-900">Your Cart</h2>
             <p className="text-xs text-slate-500">
-              {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+              {cartItems.length + freeItems.length}{' '}
+              {cartItems.length + freeItems.length === 1 ? 'item' : 'items'}
             </p>
           </div>
           <button
@@ -222,6 +226,43 @@ export function BrewlyCart(props: BrewlyCartProps) {
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
+                    </div>
+                  );
+                })}
+                {freeItems.map(item => {
+                  const thumb = thumbForSku(item.sku);
+                  const menuItem = BREWLY_MENU.find(m => m.sku === item.sku);
+                  const name = menuItem?.name ?? item.sku;
+                  return (
+                    <div
+                      key={`free-${item.sku}`}
+                      className="flex items-center gap-3 rounded-2xl border border-green-300 bg-green-50/60 p-3"
+                    >
+                      <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-green-100">
+                        <span className="absolute inset-0 flex items-center justify-center text-2xl">
+                          {thumb.emoji}
+                        </span>
+                        {thumb.image && (
+                          <img
+                            src={thumb.image}
+                            alt={name}
+                            loading="lazy"
+                            className="relative h-full w-full object-cover"
+                            onError={e => {
+                              (e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-slate-900">{name}</p>
+                        <p className="text-xs font-bold uppercase tracking-wide text-green-800">
+                          {item.discountName}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-green-800 px-2.5 py-1 text-xs font-bold text-white">
+                        ×{item.quantity}
+                      </span>
                     </div>
                   );
                 })}

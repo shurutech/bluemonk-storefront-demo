@@ -27,7 +27,9 @@ export function BrewlyStorefront() {
     );
   }
 
-  const cartCount = storefront.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount =
+    storefront.cartItems.reduce((sum, item) => sum + item.quantity, 0) +
+    storefront.freeItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleAdd = (item: MenuItem) => {
     const existing = storefront.cartItems.find(c => c.sku === item.sku);
@@ -67,6 +69,7 @@ export function BrewlyStorefront() {
         open={cartOpen}
         onClose={() => setCartOpen(false)}
         cartItems={storefront.cartItems}
+        freeItems={storefront.freeItems}
         cartSubtotal={storefront.cartSubtotal}
         discountTotal={storefront.discountTotal}
         couponCodes={storefront.couponCodes}
