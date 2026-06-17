@@ -3,7 +3,7 @@
 // so the request looks like a clean server-to-server call and doesn't trip
 // GCP Cloud Armor in front of the backend.
 
-const BACKEND_ORIGIN = 'https://demo.bluemonk.shurutech.com';
+const BACKEND_ORIGIN = 'https://pickup-coffee.bluemonk.shurutech.com';
 
 export default async (request: Request): Promise<Response> => {
   const url = new URL(request.url);
