@@ -71,7 +71,12 @@ export function BrewlyCart(props: BrewlyCartProps) {
   } = props;
 
   const [couponInput, setCouponInput] = useState('');
+  const [refundedSkus, setRefundedSkus] = useState<Set<string>>(new Set());
   const total = Math.max(0, cartSubtotal - discountTotal);
+  const refundedAmount = cartItems
+    .filter(item => refundedSkus.has(item.sku))
+    .reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const netTotal = Math.max(0, total - refundedAmount);
   const triggeredCampaigns = lastResponse?.triggeredCampaigns ?? [];
 
   useEffect(() => {
@@ -82,6 +87,20 @@ export function BrewlyCart(props: BrewlyCartProps) {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (sessionState === 'open') setRefundedSkus(new Set());
+  }, [sessionState]);
+
+  const toggleRefund = (sku: string) => {
+    setRefundedSkus(prev => {
+      const next = new Set(prev);
+      if (next.has(sku)) next.delete(sku);
+      else next.add(sku);
+      return next;
+    });
+    toast.success(refundedSkus.has(sku) ? 'Item restored' : 'Item refunded', { duration: 1500 });
+  };
 
   const handleApply = () => {
     const code = couponInput.trim();
@@ -144,46 +163,174 @@ export function BrewlyCart(props: BrewlyCartProps) {
         </header>
 
         {sessionState === 'closed' ? (
-          <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-              <Sparkles className="h-10 w-10 text-green-800" />
+          <>
+            <div className="flex-1 overflow-y-auto">
+              <div className="border-b border-stone-200 bg-green-50/40 px-5 py-4 text-center">
+                <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                  <Sparkles className="h-6 w-6 text-green-800" />
+                </div>
+                <h3 className="text-base font-bold text-slate-900">Order placed</h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Tap Refund on any item to issue a partial refund.
+                </p>
+              </div>
+              <div className="space-y-2 px-4 py-4">
+                {cartItems.map(item => {
+                  const thumb = thumbForSku(item.sku);
+                  const isRefunded = refundedSkus.has(item.sku);
+                  return (
+                    <div
+                      key={item.sku}
+                      className={
+                        'flex items-center gap-3 rounded-2xl border p-3 ' +
+                        (isRefunded
+                          ? 'border-stone-200 bg-stone-50/70 opacity-60'
+                          : 'border-stone-200 bg-white')
+                      }
+                    >
+                      <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-green-50">
+                        <span className="absolute inset-0 flex items-center justify-center text-2xl">
+                          {thumb.emoji}
+                        </span>
+                        {thumb.image && (
+                          <img
+                            src={thumb.image}
+                            alt={item.name}
+                            loading="lazy"
+                            className="relative h-full w-full object-cover"
+                            onError={e => {
+                              (e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={
+                            'truncate text-sm font-semibold ' +
+                            (isRefunded ? 'text-slate-500 line-through' : 'text-slate-900')
+                          }
+                        >
+                          {item.name}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          ${item.price.toFixed(2)} × {item.quantity}
+                        </p>
+                      </div>
+                      {isRefunded ? (
+                        <button
+                          type="button"
+                          onClick={() => toggleRefund(item.sku)}
+                          className="rounded-full border border-stone-300 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-stone-100"
+                        >
+                          Undo
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => toggleRefund(item.sku)}
+                          className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                        >
+                          Refund
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+                {freeItems.map(item => {
+                  const thumb = thumbForSku(item.sku);
+                  const menuItem = BREWLY_MENU.find(m => m.sku === item.sku);
+                  const name = menuItem?.name ?? item.sku;
+                  return (
+                    <div
+                      key={`closed-free-${item.sku}`}
+                      className="flex items-center gap-3 rounded-2xl border border-green-300 bg-green-50/60 p-3"
+                    >
+                      <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-green-100">
+                        <span className="absolute inset-0 flex items-center justify-center text-2xl">
+                          {thumb.emoji}
+                        </span>
+                        {thumb.image && (
+                          <img
+                            src={thumb.image}
+                            alt={name}
+                            loading="lazy"
+                            className="relative h-full w-full object-cover"
+                            onError={e => {
+                              (e.currentTarget as HTMLImageElement).style.visibility = 'hidden';
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-slate-900">{name}</p>
+                        <p className="text-xs font-bold uppercase tracking-wide text-green-800">
+                          {item.discountName}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-green-800 px-2.5 py-1 text-xs font-bold text-white">
+                        ×{item.quantity}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Order placed</h3>
-            <p className="mt-2 text-sm text-slate-500">
-              Your order is being prepared. We'll let you know when it's ready for pick-up.
-            </p>
-            <p className="mt-4 text-sm text-slate-500">
-              Order total · <span className="font-semibold text-slate-700">${total.toFixed(2)}</span>
-            </p>
-            <Button
-              onClick={() => {
-                onNewSession();
-                onClose();
-                onBrowse();
-              }}
-              className="mt-6 bg-green-800 text-white hover:bg-green-900"
-            >
-              Start a new order
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={handleRefund}
-              disabled={isLoading}
-              className="mt-2 text-slate-500 hover:bg-stone-100 hover:text-red-700"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Processing refund…
-                </>
-              ) : (
-                <>
-                  <RotateCcw className="h-4 w-4" />
-                  Refund order
-                </>
-              )}
-            </Button>
-          </div>
+
+            <footer className="border-t border-stone-200 bg-white px-5 py-4">
+              <div className="rounded-2xl bg-stone-50 p-4">
+                <div className="flex items-center justify-between text-sm text-slate-600">
+                  <span>Order total</span>
+                  <span className="tabular-nums">${total.toFixed(2)}</span>
+                </div>
+                {refundedAmount > 0 && (
+                  <div className="mt-1.5 flex items-center justify-between text-sm">
+                    <span className="text-slate-600">Refunded</span>
+                    <span className="tabular-nums font-semibold text-red-700">
+                      −${refundedAmount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                <div className="mt-3 border-t border-stone-200 pt-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold text-slate-900">Net charged</span>
+                    <span className="text-xl font-bold tabular-nums text-slate-900">
+                      ${netTotal.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => {
+                  onNewSession();
+                  onClose();
+                  onBrowse();
+                }}
+                className="mt-3 w-full bg-green-800 py-6 text-base font-bold text-white shadow-md hover:bg-green-900"
+              >
+                Start a new order
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleRefund}
+                disabled={isLoading}
+                className="mt-1 w-full text-slate-500 hover:bg-stone-100 hover:text-red-700"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Processing refund…
+                  </>
+                ) : (
+                  <>
+                    <RotateCcw className="h-4 w-4" />
+                    Refund full order
+                  </>
+                )}
+              </Button>
+            </footer>
+          </>
         ) : sessionState === 'cancelled' ? (
           <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
             <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-200">
