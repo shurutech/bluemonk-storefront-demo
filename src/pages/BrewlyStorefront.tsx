@@ -80,6 +80,7 @@ export function BrewlyStorefront() {
         lastResponse={storefront.lastResponse}
         isLoading={storefront.isLoading}
         onCheckout={storefront.checkout}
+        onRefund={storefront.cancelSession}
         sessionState={storefront.sessionState}
         onNewSession={storefront.newSession}
         onBrowse={() => setView('menu')}

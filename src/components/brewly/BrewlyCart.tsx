@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Loader2, Minus, Plus, ShoppingBag, Sparkles, Tag, Trash2, X } from 'lucide-react';
+import {
+  Loader2,
+  Minus,
+  Plus,
+  RotateCcw,
+  ShoppingBag,
+  Sparkles,
+  Tag,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +42,7 @@ interface BrewlyCartProps {
   lastResponse: IntegrationSessionUpdateResponse | null;
   isLoading: boolean;
   onCheckout: () => Promise<unknown>;
+  onRefund: () => Promise<unknown>;
   sessionState: DemoSessionState;
   onNewSession: () => void;
   onBrowse: () => void;
@@ -53,6 +64,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
     lastResponse,
     isLoading,
     onCheckout,
+    onRefund,
     sessionState,
     onNewSession,
     onBrowse,
@@ -82,6 +94,15 @@ export function BrewlyCart(props: BrewlyCartProps) {
     try {
       await onCheckout();
       toast.success(`Order placed · $${total.toFixed(2)}`);
+    } catch {
+      // already toasted by the hook's logger
+    }
+  };
+
+  const handleRefund = async () => {
+    try {
+      await onRefund();
+      toast.success(`Order refunded · $${total.toFixed(2)}`);
     } catch {
       // already toasted by the hook's logger
     }
@@ -130,6 +151,48 @@ export function BrewlyCart(props: BrewlyCartProps) {
             <h3 className="text-xl font-bold text-slate-900">Order placed</h3>
             <p className="mt-2 text-sm text-slate-500">
               Your order is being prepared. We'll let you know when it's ready for pick-up.
+            </p>
+            <p className="mt-4 text-sm text-slate-500">
+              Order total · <span className="font-semibold text-slate-700">${total.toFixed(2)}</span>
+            </p>
+            <Button
+              onClick={() => {
+                onNewSession();
+                onClose();
+                onBrowse();
+              }}
+              className="mt-6 bg-green-800 text-white hover:bg-green-900"
+            >
+              Start a new order
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleRefund}
+              disabled={isLoading}
+              className="mt-2 text-slate-500 hover:bg-stone-100 hover:text-red-700"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Processing refund…
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="h-4 w-4" />
+                  Refund order
+                </>
+              )}
+            </Button>
+          </div>
+        ) : sessionState === 'cancelled' ? (
+          <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
+            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-200">
+              <RotateCcw className="h-10 w-10 text-slate-600" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">Order refunded</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              ${total.toFixed(2)} has been refunded. Promotions and coupons used on this order have
+              been returned.
             </p>
             <Button
               onClick={() => {
