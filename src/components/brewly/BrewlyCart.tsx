@@ -93,7 +93,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
   const handleCheckout = async () => {
     try {
       await onCheckout();
-      toast.success(`Order placed · $${total.toFixed(2)}`);
+      toast.success(`Order placed · ₱${total.toFixed(2)}`);
     } catch {
       // already toasted by the hook's logger
     }
@@ -102,7 +102,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
   const handleRefund = async () => {
     try {
       await onRefund();
-      toast.success(`Order refunded · $${total.toFixed(2)}`);
+      toast.success(`Order refunded · ₱${total.toFixed(2)}`);
     } catch {
       // already toasted by the hook's logger
     }
@@ -153,7 +153,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
               Your order is being prepared. We'll let you know when it's ready for pick-up.
             </p>
             <p className="mt-4 text-sm text-slate-500">
-              Order total · <span className="font-semibold text-slate-700">${total.toFixed(2)}</span>
+              Order total · <span className="font-semibold text-slate-700">₱{total.toFixed(2)}</span>
             </p>
             <Button
               onClick={() => {
@@ -191,7 +191,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
             </div>
             <h3 className="text-xl font-bold text-slate-900">Order refunded</h3>
             <p className="mt-2 text-sm text-slate-500">
-              ${total.toFixed(2)} has been refunded. Promotions and coupons used on this order have
+              ₱{total.toFixed(2)} has been refunded. Promotions and coupons used on this order have
               been returned.
             </p>
             <Button
@@ -252,7 +252,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
                         <p className="truncate text-sm font-semibold text-slate-900">
                           {item.name}
                         </p>
-                        <p className="text-xs text-slate-500">${item.price.toFixed(2)}</p>
+                        <p className="text-xs text-slate-500">₱{item.price.toFixed(2)}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <button
@@ -401,7 +401,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
               <div className="rounded-2xl bg-stone-50 p-4">
                 <div className="flex items-center justify-between text-sm text-slate-600">
                   <span>Subtotal</span>
-                  <span className="tabular-nums">${cartSubtotal.toFixed(2)}</span>
+                  <span className="tabular-nums">₱{cartSubtotal.toFixed(2)}</span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-sm">
                   <span className="text-slate-600">Discounts</span>
@@ -412,14 +412,14 @@ export function BrewlyCart(props: BrewlyCartProps) {
                         : 'tabular-nums text-slate-400'
                     }
                   >
-                    {discountTotal > 0 ? '−' : ''}${discountTotal.toFixed(2)}
+                    {discountTotal > 0 ? '−' : ''}₱{discountTotal.toFixed(2)}
                   </span>
                 </div>
                 <div className="mt-3 border-t border-stone-200 pt-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-bold text-slate-900">Total</span>
                     <span className="text-xl font-bold tabular-nums text-slate-900">
-                      ${total.toFixed(2)}
+                      ₱{total.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -436,7 +436,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
                     Syncing…
                   </>
                 ) : (
-                  <>Place Order · ${total.toFixed(2)}</>
+                  <>Place Order · ₱{total.toFixed(2)}</>
                 )}
               </Button>
             </footer>

@@ -75,7 +75,7 @@ export function BrewlyHome({ onBrowse }: BrewlyHomeProps) {
               🥈
             </div>
           </div>
-          <p className="mt-3 text-xs opacity-90">$15 more to level up to Silver.</p>
+          <p className="mt-3 text-xs opacity-90">₱15 more to level up to Silver.</p>
         </div>
 
         <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -169,7 +169,7 @@ export function BrewlyHome({ onBrowse }: BrewlyHomeProps) {
               <div className="p-4">
                 <p className="truncate text-sm font-bold text-slate-900">{item.name}</p>
                 <p className="line-clamp-2 text-xs text-slate-500">{item.description}</p>
-                <p className="mt-2 text-sm font-bold text-green-800">${item.price.toFixed(2)}</p>
+                <p className="mt-2 text-sm font-bold text-green-800">₱{item.price.toFixed(2)}</p>
               </div>
             </button>
           ))}

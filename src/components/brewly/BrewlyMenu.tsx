@@ -95,7 +95,7 @@ export function BrewlyMenu({ onAdd }: BrewlyMenuProps) {
                 <p className="text-base font-bold text-slate-900">{item.name}</p>
                 <p className="mt-1 line-clamp-2 text-xs text-slate-500">{item.description}</p>
                 <div className="mt-auto flex items-center justify-between pt-3">
-                  <p className="text-base font-bold text-green-800">${item.price.toFixed(2)}</p>
+                  <p className="text-base font-bold text-green-800">₱{item.price.toFixed(2)}</p>
                   <button
                     type="button"
                     onClick={() => onAdd(item)}
