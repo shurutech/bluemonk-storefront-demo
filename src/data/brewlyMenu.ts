@@ -32,7 +32,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-001',
     name: 'Iced Vanilla Latte',
-    price: 6.5,
+    price: 210,
     category: 'Featured',
     description: 'Espresso, milk, vanilla, ice — our most-ordered drink.',
     emoji: '🥤',
@@ -43,7 +43,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-002',
     name: 'Cold Brew',
-    price: 5.5,
+    price: 190,
     category: 'Coffee',
     description: 'Slow-steeped 16 hours. Smooth, low-acid.',
     emoji: '☕️',
@@ -53,7 +53,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-003',
     name: 'Flat White',
-    price: 5.8,
+    price: 195,
     category: 'Coffee',
     description: 'Double ristretto with velvety steamed milk.',
     emoji: '☕️',
@@ -63,7 +63,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-004',
     name: 'Hazelnut Mocha',
-    price: 6.8,
+    price: 220,
     category: 'Coffee',
     description: 'Espresso, dark chocolate, toasted hazelnut.',
     emoji: '🍫',
@@ -73,7 +73,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-005',
     name: 'Matcha Latte',
-    price: 6.2,
+    price: 210,
     category: 'Tea & Matcha',
     description: 'Ceremonial matcha with creamy oat milk.',
     emoji: '🍵',
@@ -84,7 +84,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-006',
     name: 'Strawberry Yuzu Tea',
-    price: 5.9,
+    price: 200,
     category: 'Tea & Matcha',
     description: 'Cold brew tea with strawberry purée and yuzu.',
     emoji: '🍓',
@@ -94,7 +94,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-007',
     name: 'Butter Croissant',
-    price: 4.2,
+    price: 140,
     category: 'Bites',
     description: 'Flaky, all-butter, baked fresh daily.',
     emoji: '🥐',
@@ -104,7 +104,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-008',
     name: 'Almond Biscotti',
-    price: 3.5,
+    price: 110,
     category: 'Bites',
     description: 'Twice-baked with toasted almonds.',
     emoji: '🍪',
@@ -114,7 +114,7 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-009',
     name: 'Avocado Toast',
-    price: 7.8,
+    price: 290,
     category: 'Bites',
     description: 'Sourdough, smashed avocado, chili crisp.',
     emoji: '🥑',
@@ -124,9 +124,9 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-010',
     name: 'Pair & Pastry Bundle',
-    price: 9.5,
+    price: 320,
     category: 'Bundles',
-    description: 'Any coffee + a fresh-baked pastry. Save $1.50.',
+    description: 'Any coffee + a fresh-baked pastry. Save ₱30.',
     emoji: '🎁',
     image: UNSPLASH('photo-1554118811-1e0d58224f24'),
     badge: 'Bundle',
@@ -135,9 +135,9 @@ export const BREWLY_MENU: MenuItem[] = [
   {
     sku: 'BREW-011',
     name: 'Morning Set',
-    price: 11,
+    price: 390,
     category: 'Bundles',
-    description: 'Coffee, pastry, and a piece of fruit. Save $2.',
+    description: 'Coffee, pastry, and a piece of fruit. Save ₱40.',
     emoji: '🌅',
     image: UNSPLASH('photo-1525351484163-7529414344d8'),
     attributes: { productCategory: 'bundle' },

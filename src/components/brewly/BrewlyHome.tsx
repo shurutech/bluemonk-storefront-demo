@@ -75,7 +75,7 @@ export function BrewlyHome({ onBrowse }: BrewlyHomeProps) {
               🥈
             </div>
           </div>
-          <p className="mt-3 text-xs opacity-90">₱15 more to level up to Silver.</p>
+          <p className="mt-3 text-xs opacity-90">₱500 more to level up to Silver.</p>
         </div>
 
         <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">

@@ -3,7 +3,7 @@ import { Ticket } from 'lucide-react';
 const VOUCHERS = [
   { name: '20% off cold brews', code: 'SUMMER20', expires: 'Expires in 12 days' },
   { name: 'Free pastry with coffee', code: 'PAIRUP', expires: 'Expires in 4 days' },
-  { name: '₱5 referral credit', code: 'FRIEND5', expires: 'No expiry' },
+  { name: '₱100 referral credit', code: 'FRIEND5', expires: 'No expiry' },
 ];
 
 export function BrewlyWallet() {
@@ -27,7 +27,7 @@ export function BrewlyWallet() {
             <p className="text-[10px] font-bold tracking-wider uppercase opacity-80">
               Next reward
             </p>
-            <p className="mt-1 text-sm font-semibold">₱5 off any drink at 1,500 pts</p>
+            <p className="mt-1 text-sm font-semibold">₱50 off any drink at 1,500 pts</p>
             <div className="mt-2 relative h-1.5 overflow-hidden rounded-full bg-white/20">
               <div className="absolute inset-y-0 left-0 w-[82%] rounded-full bg-amber-300" />
             </div>
