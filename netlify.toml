@@ -5,14 +5,22 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Same-origin proxy to the deployed BlueMonk backend.
+# Same-origin proxy to the deployed BlueMonk backends.
 # Implemented as an Edge Function (not a plain redirect) so we can strip
 # Origin / Referer / Cookie before forwarding — the deployed backend sits
 # behind GCP Cloud Armor, which 403s requests that look like they
 # originated from an unknown browser origin.
+#
+# Two prefixes, two backends (see netlify/edge-functions/api-proxy.ts):
+#   /api      -> pickup-coffee.bluemonk.shurutech.com
+#   /api-demo -> demo.bluemonk.shurutech.com
 [[edge_functions]]
   function = "api-proxy"
   path = "/api/*"
+
+[[edge_functions]]
+  function = "api-proxy"
+  path = "/api-demo/*"
 
 # SPA fallback so client-side routes resolve on refresh.
 [[redirects]]
