@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 import { Terminal, X } from 'lucide-react';
 import { InspectorPanel } from '@/components/demo-storefront/InspectorPanel';
 import { EventLog } from '@/components/demo-storefront/EventLog';
+import { BrewlyCustomerInspector } from '@/components/brewly/BrewlyCustomerInspector';
 import type {
+  CustomerJourney,
   DemoRequestSnapshot,
   EventLogEntry,
+  IntegrationCustomerUpsertResponse,
   IntegrationSessionUpdateResponse,
 } from '@/types/integrationApi';
 
@@ -14,6 +17,10 @@ interface BrewlyDevDrawerProps {
   lastRequest: DemoRequestSnapshot | null;
   lastResponse: IntegrationSessionUpdateResponse | null;
   eventLog: EventLogEntry[];
+  profileId: string;
+  customerReady: boolean;
+  lastSignupResponse: IntegrationCustomerUpsertResponse | null;
+  journeys: CustomerJourney[];
 }
 
 export function BrewlyDevDrawer({
@@ -22,6 +29,10 @@ export function BrewlyDevDrawer({
   lastRequest,
   lastResponse,
   eventLog,
+  profileId,
+  customerReady,
+  lastSignupResponse,
+  journeys,
 }: BrewlyDevDrawerProps) {
   useEffect(() => {
     if (!open) return;
@@ -72,6 +83,15 @@ export function BrewlyDevDrawer({
         <div className="flex-1 space-y-3 overflow-y-auto p-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-2">
             <InspectorPanel request={lastRequest} response={lastResponse} />
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white">
+            <BrewlyCustomerInspector
+              profileId={profileId}
+              customerReady={customerReady}
+              lastSignupResponse={lastSignupResponse}
+              journeys={journeys}
+            />
           </div>
 
           {eventLog.length > 0 && (

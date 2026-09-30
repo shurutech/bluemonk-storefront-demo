@@ -3,6 +3,7 @@ import {
   CheckCircle2,
   Gift,
   Percent,
+  Route,
   Ticket,
   UserCog,
   XCircle,
@@ -122,6 +123,14 @@ const EFFECT_META: Record<string, EffectMeta> = {
       `Set ${(p.attributeName as string) || 'an attribute'} to ${
         p.value === undefined ? 'a new value' : JSON.stringify(p.value)
       }.`,
+  },
+  enrollInJourney: {
+    label: 'Journey entry rule',
+    icon: Route,
+    tone: 'blue',
+    title: p => (p.journeyId ? `Entry rule for journey #${p.journeyId} fired` : 'Journey entry rule fired'),
+    body: () =>
+      'The engine then checks the journey trigger precisely (sign-up, first purchase, qualifying coupon). The Journeys tab shows whether the customer was actually enrolled.',
   },
 };
 

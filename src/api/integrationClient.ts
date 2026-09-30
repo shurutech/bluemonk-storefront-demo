@@ -74,7 +74,11 @@ export const integrationApiEndpoints = {
     track: (dry?: boolean) => `/v1/events${dry ? '?dry=true' : ''}`,
   },
   customers: {
+    upsert: (integrationId: string) =>
+      `/v1/customers/${encodeURIComponent(integrationId)}?runRuleEngine=true`,
     inventory: (integrationId: string) =>
       `/v1/customers/${encodeURIComponent(integrationId)}/inventory?coupons=true&profile=true`,
+    journeys: (integrationId: string) =>
+      `/v1/customers/${encodeURIComponent(integrationId)}/journeys`,
   },
 } as const;

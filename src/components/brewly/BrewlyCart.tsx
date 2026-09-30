@@ -4,6 +4,7 @@ import {
   Minus,
   Plus,
   RotateCcw,
+  Route,
   ShoppingBag,
   Sparkles,
   Tag,
@@ -14,11 +15,13 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BREWLY_MENU } from '@/data/brewlyMenu';
+import { groupJourneyUpdates } from '@/lib/journeys';
 import type {
   DemoCartItem,
   DemoFreeItem,
   DemoSessionState,
   IntegrationSessionUpdateResponse,
+  JourneyUpdate,
 } from '@/types/integrationApi';
 
 function thumbForSku(sku: string): { image?: string; emoji: string } {
@@ -46,6 +49,9 @@ interface BrewlyCartProps {
   sessionState: DemoSessionState;
   onNewSession: () => void;
   onBrowse: () => void;
+  // Journey changes caused by the order just placed (empty until re-read).
+  journeyUpdates: JourneyUpdate[];
+  onViewJourneys: () => void;
 }
 
 export function BrewlyCart(props: BrewlyCartProps) {
@@ -68,6 +74,8 @@ export function BrewlyCart(props: BrewlyCartProps) {
     sessionState,
     onNewSession,
     onBrowse,
+    journeyUpdates,
+    onViewJourneys,
   } = props;
 
   const [couponInput, setCouponInput] = useState('');
@@ -153,8 +161,35 @@ export function BrewlyCart(props: BrewlyCartProps) {
               Your order is being prepared. We'll let you know when it's ready for pick-up.
             </p>
             <p className="mt-4 text-sm text-slate-500">
-              Order total · <span className="font-semibold text-slate-700">₱{total.toFixed(2)}</span>
+              Order total ·{' '}
+              <span className="font-semibold text-slate-700">₱{total.toFixed(2)}</span>
             </p>
+            {journeyUpdates.length > 0 && (
+              <div className="mt-5 w-full rounded-2xl border border-green-200 bg-green-50 p-4 text-left">
+                <p className="flex items-center gap-1.5 text-xs font-bold text-green-800">
+                  <Route className="h-3.5 w-3.5" />
+                  Journey progress
+                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {groupJourneyUpdates(journeyUpdates).map(u => (
+                    <li key={u.journeyId} className="text-xs text-green-900">
+                      <span className="font-semibold">{u.journeyName}</span>
+                      <span className="text-green-800"> · {u.message}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onViewJourneys();
+                  }}
+                  className="mt-3 text-xs font-bold text-green-800 hover:text-green-900"
+                >
+                  View journeys →
+                </button>
+              </div>
+            )}
             <Button
               onClick={() => {
                 onNewSession();
@@ -249,9 +284,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-slate-900">
-                          {item.name}
-                        </p>
+                        <p className="truncate text-sm font-semibold text-slate-900">{item.name}</p>
                         <p className="text-xs text-slate-500">₱{item.price.toFixed(2)}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -272,9 +305,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
                         </span>
                         <button
                           type="button"
-                          onClick={() =>
-                            updateCartItem(item.sku, { quantity: item.quantity + 1 })
-                          }
+                          onClick={() => updateCartItem(item.sku, { quantity: item.quantity + 1 })}
                           className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 text-slate-500 hover:bg-stone-50"
                           aria-label={`Increase ${item.name}`}
                         >
@@ -319,7 +350,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-slate-900">{name}</p>
-                        <p className="text-xs font-bold uppercase tracking-wide text-green-800">
+                        <p className="text-xs font-bold tracking-wide text-green-800 uppercase">
                           {item.discountName}
                         </p>
                       </div>
@@ -408,8 +439,8 @@ export function BrewlyCart(props: BrewlyCartProps) {
                   <span
                     className={
                       discountTotal > 0
-                        ? 'tabular-nums font-semibold text-green-800'
-                        : 'tabular-nums text-slate-400'
+                        ? 'font-semibold text-green-800 tabular-nums'
+                        : 'text-slate-400 tabular-nums'
                     }
                   >
                     {discountTotal > 0 ? '−' : ''}₱{discountTotal.toFixed(2)}
@@ -418,7 +449,7 @@ export function BrewlyCart(props: BrewlyCartProps) {
                 <div className="mt-3 border-t border-stone-200 pt-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-bold text-slate-900">Total</span>
-                    <span className="text-xl font-bold tabular-nums text-slate-900">
+                    <span className="text-xl font-bold text-slate-900 tabular-nums">
                       ₱{total.toFixed(2)}
                     </span>
                   </div>

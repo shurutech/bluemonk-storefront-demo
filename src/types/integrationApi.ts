@@ -111,6 +111,59 @@ export interface IntegrationSessionUpdateResponse {
   ruleFailureReasons: RuleFailureReason[];
 }
 
+// Customer upsert — PUT /v1/customers/{id}?runRuleEngine=true. A first-time
+// upsert fires the built-in customerProfileCreated event, which is what enrolls
+// the customer into `user_signed_up` journeys.
+export interface IntegrationCustomerUpsertBody {
+  attributes: Record<string, unknown>;
+  responseContent?: string[];
+}
+
+export interface IntegrationCustomerUpsertResponse {
+  effects: TriggeredEffect[];
+  createdCoupons: CreatedCoupon[];
+  triggeredCampaigns?: TriggeredCampaign[];
+  ruleFailureReasons?: RuleFailureReason[];
+}
+
+// Customer-facing journey view — GET /v1/customers/{id}/journeys. Mirrors
+// dtos.CustomerJourneyView. It is a teaser: only completed / active steps reveal
+// their coupon code; expired and forfeited steps are reported as `locked`.
+export type JourneyInstanceStatus =
+  | 'enrolled'
+  | 'in_progress'
+  | 'completed'
+  | 'exited'
+  | 'cancelled';
+
+export type CustomerJourneyStepState = 'completed' | 'active' | 'locked';
+
+export interface CustomerJourneyStep {
+  position: number;
+  state: CustomerJourneyStepState;
+  couponCode?: string;
+  expiresAt?: string;
+  completedAt?: string;
+  rewardLabel?: string;
+  timingAnchor?: 'enrollment' | 'previous_step_completion' | 'previous_step_activation';
+  expectedUnlockAt?: string;
+  validityPeriodSeconds?: number;
+}
+
+export interface CustomerJourney {
+  journeyId: number;
+  journeyName: string;
+  status: JourneyInstanceStatus;
+  instanceNumber: number;
+  currentPosition: number | null;
+  totalSteps: number;
+  steps: CustomerJourneyStep[];
+}
+
+export interface CustomerJourneysResponse {
+  journeys: CustomerJourney[];
+}
+
 // --- Demo storefront UI types ---
 
 export interface DemoStorefrontConfig {
@@ -140,6 +193,15 @@ export interface EventLogEntry {
   action: string;
   status: 'success' | 'error';
   detail?: string;
+}
+
+// One human-readable change between two journey snapshots, e.g. "step 1
+// redeemed" or "enrolled". Surfaced as toasts and on the order-placed screen.
+export interface JourneyUpdate {
+  journeyId: number;
+  journeyName: string;
+  kind: 'enrolled' | 'stepCompleted' | 'stepUnlocked' | 'completed' | 'exited';
+  message: string;
 }
 
 export interface DemoRequestSnapshot {

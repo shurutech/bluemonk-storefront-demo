@@ -1,4 +1,7 @@
-import { Ticket } from 'lucide-react';
+import { Route, Ticket } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { activeJourneyVouchers, formatRelative } from '@/lib/journeys';
+import type { CustomerJourney } from '@/types/integrationApi';
 
 const VOUCHERS = [
   { name: '20% off cold brews', code: 'SUMMER20', expires: 'Expires in 12 days' },
@@ -6,7 +9,21 @@ const VOUCHERS = [
   { name: '₱100 referral credit', code: 'FRIEND5', expires: 'No expiry' },
 ];
 
-export function BrewlyWallet() {
+interface BrewlyWalletProps {
+  journeys: CustomerJourney[];
+  couponCodes: string[];
+  onUseVoucher: (code: string) => void;
+  onViewJourneys: () => void;
+}
+
+export function BrewlyWallet({
+  journeys,
+  couponCodes,
+  onUseVoucher,
+  onViewJourneys,
+}: BrewlyWalletProps) {
+  const journeyVouchers = activeJourneyVouchers(journeys);
+
   return (
     <div className="space-y-6">
       <div>
@@ -16,6 +33,64 @@ export function BrewlyWallet() {
         <h1 className="text-2xl font-bold text-slate-900">Vouchers, points, and saved cards</h1>
       </div>
 
+      {journeyVouchers.length > 0 && (
+        <div className="rounded-2xl border border-green-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.18em] text-green-800 uppercase">
+              <Route className="h-3.5 w-3.5" />
+              From your journeys
+            </p>
+            <button
+              type="button"
+              onClick={onViewJourneys}
+              className="text-xs font-bold text-green-800 hover:text-green-900"
+            >
+              View journeys →
+            </button>
+          </div>
+          <div className="mt-3 space-y-2">
+            {journeyVouchers.map(({ journey, step }) => {
+              const inCart = couponCodes.includes(step.couponCode);
+              return (
+                <div
+                  key={step.couponCode}
+                  className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50/60 p-3"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 text-green-800">
+                    <Ticket className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-slate-900">
+                      {step.rewardLabel ?? `Step ${step.position} reward`}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {journey.journeyName} · step {step.position} of {journey.totalSteps} · Code:{' '}
+                      <span className="font-mono font-semibold text-slate-700">
+                        {step.couponCode}
+                      </span>
+                      {step.expiresAt && <> · Expires {formatRelative(step.expiresAt)}</>}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onUseVoucher(step.couponCode)}
+                    disabled={inCart}
+                    className={cn(
+                      'shrink-0 rounded-full px-3 py-1 text-xs font-bold transition-colors',
+                      inCart
+                        ? 'border border-green-200 bg-white text-green-800'
+                        : 'bg-green-800 text-white hover:bg-green-900'
+                    )}
+                  >
+                    {inCart ? '✓ In cart' : 'Use in cart'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl bg-gradient-to-br from-green-900 to-green-600 p-6 text-white shadow-sm md:col-span-1">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase opacity-80">
@@ -24,11 +99,9 @@ export function BrewlyWallet() {
           <p className="mt-2 text-4xl font-black tabular-nums">1,240</p>
           <p className="text-xs opacity-80">points earned this year</p>
           <div className="mt-6 rounded-xl bg-white/15 p-3 backdrop-blur-sm">
-            <p className="text-[10px] font-bold tracking-wider uppercase opacity-80">
-              Next reward
-            </p>
+            <p className="text-[10px] font-bold tracking-wider uppercase opacity-80">Next reward</p>
             <p className="mt-1 text-sm font-semibold">₱50 off any drink at 1,500 pts</p>
-            <div className="mt-2 relative h-1.5 overflow-hidden rounded-full bg-white/20">
+            <div className="relative mt-2 h-1.5 overflow-hidden rounded-full bg-white/20">
               <div className="absolute inset-y-0 left-0 w-[82%] rounded-full bg-amber-300" />
             </div>
           </div>

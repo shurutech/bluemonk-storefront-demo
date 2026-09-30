@@ -1,13 +1,14 @@
-import { Coffee, Settings2, ShoppingBag, Terminal } from 'lucide-react';
+import { Coffee, Settings2, ShoppingBag, Terminal, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BREWLY_BRAND } from '@/data/brewlyMenu';
 import { cn } from '@/lib/utils';
 
-export type BrewlyView = 'home' | 'menu' | 'wallet' | 'account';
+export type BrewlyView = 'home' | 'menu' | 'journeys' | 'wallet' | 'account';
 
 const NAV_ITEMS: { id: BrewlyView; label: string }[] = [
   { id: 'home', label: 'Home' },
   { id: 'menu', label: 'Menu' },
+  { id: 'journeys', label: 'Journeys' },
   { id: 'wallet', label: 'Wallet' },
   { id: 'account', label: 'Account' },
 ];
@@ -16,8 +17,11 @@ interface BrewlyHeaderProps {
   active: BrewlyView;
   onNavigate: (view: BrewlyView) => void;
   cartCount: number;
+  // Live journey vouchers the customer can redeem right now — badged on the tab.
+  journeyVoucherCount: number;
   onOpenCart: () => void;
   onOpenDev: () => void;
+  onNewCustomer: () => void;
   onReconfigure: () => void;
 }
 
@@ -25,8 +29,10 @@ export function BrewlyHeader({
   active,
   onNavigate,
   cartCount,
+  journeyVoucherCount,
   onOpenCart,
   onOpenDev,
+  onNewCustomer,
   onReconfigure,
 }: BrewlyHeaderProps) {
   return (
@@ -58,12 +64,13 @@ export function BrewlyHeader({
               onClick={() => onNavigate(item.id)}
               className={cn(
                 'rounded-full px-4 py-1.5 text-sm font-semibold transition-colors',
-                active === item.id
-                  ? 'bg-green-800 text-white'
-                  : 'text-slate-600 hover:bg-stone-100'
+                active === item.id ? 'bg-green-800 text-white' : 'text-slate-600 hover:bg-stone-100'
               )}
             >
               {item.label}
+              {item.id === 'journeys' && journeyVoucherCount > 0 && (
+                <VoucherBadge count={journeyVoucherCount} />
+              )}
             </button>
           ))}
         </nav>
@@ -78,6 +85,16 @@ export function BrewlyHeader({
           >
             <Terminal className="mr-1.5 h-3.5 w-3.5" />
             Dev
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onNewCustomer}
+            className="hidden text-xs text-slate-500 hover:text-slate-700 lg:inline-flex"
+            title="Sign up a fresh customer (fires sign-up journeys)"
+          >
+            <UserPlus className="mr-1.5 h-3.5 w-3.5" />
+            New customer
           </Button>
           <Button
             variant="ghost"
@@ -113,15 +130,24 @@ export function BrewlyHeader({
             onClick={() => onNavigate(item.id)}
             className={cn(
               'shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
-              active === item.id
-                ? 'bg-green-800 text-white'
-                : 'text-slate-600 hover:bg-stone-100'
+              active === item.id ? 'bg-green-800 text-white' : 'text-slate-600 hover:bg-stone-100'
             )}
           >
             {item.label}
+            {item.id === 'journeys' && journeyVoucherCount > 0 && (
+              <VoucherBadge count={journeyVoucherCount} />
+            )}
           </button>
         ))}
       </nav>
     </header>
+  );
+}
+
+function VoucherBadge({ count }: { count: number }) {
+  return (
+    <span className="ml-1.5 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-bold text-white tabular-nums">
+      {count}
+    </span>
   );
 }
